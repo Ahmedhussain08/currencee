@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "359179567065",
+    "project_id": "currencee-df19f",
+    "storage_bucket": "currencee-df19f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359179567065:android:d0245073c11391ce93a3c8",
+        "android_client_info": {
+          "package_name": "com.example.currencee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeUyjq4lWE7lqKhIVT9Wa-MNgQ9Ox8YEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
