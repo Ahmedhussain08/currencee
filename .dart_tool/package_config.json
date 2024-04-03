@@ -158,6 +158,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "loading_indicator",
+      "rootUri": "file:///C:/Users/Ahmed/AppData/Local/Pub/Cache/hosted/pub.dev/loading_indicator-3.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "matcher",
       "rootUri": "file:///C:/Users/Ahmed/AppData/Local/Pub/Cache/hosted/pub.dev/matcher-0.12.16+1",
       "packageUri": "lib/",
@@ -260,7 +266,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2024-03-31T15:03:53.963372Z",
+  "generated": "2024-04-01T16:07:10.865180Z",
   "generator": "pub",
   "generatorVersion": "3.3.2"
 }

@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:currencee/login.dart';
+import 'package:currencee/main.dart';
 import 'package:currencee/currencyapi.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,11 +45,126 @@ class _homeScreenState extends State<homeScreen> {
           style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 3),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(onPressed: (){
-            // Navigator.push(context, MaterialPageRoute(builder: (context)=>login()));
-          }, icon: Icon(Icons.person_outline_sharp))
-        ] ),
+          actions: [
+            Builder(
+              builder: (BuildContext context) {
+                User? user = FirebaseAuth.instance.currentUser;
+                return IconButton(
+                  onPressed: () {
+                    if (user != null) {
+                      // User is logged in, you can handle any specific action here
+                    } else {
+                      // User is not logged in, navigate to login page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => login()),
+                      );
+                    }
+                  },
+                  icon: Icon(
+                    user != null
+                        ? Icons.person_outline_sharp
+                        : Icons.person_outline_sharp,
+                    // Replace Icons.person_outline_sharp with the appropriate icon for the logged-in user if needed
+                    // You can also adjust the color, size, etc. based on your requirements
+                  ),
+                  tooltip: user != null ? user.email![0].toUpperCase() : 'Login',
+                );
+              },
+            ),
+          ]
+      ),
+      drawer: Drawer(
+        child: ListView(padding: EdgeInsets.all(0),  children: [
+          DrawerHeader(
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+            child: Builder(
+              builder: (BuildContext context) {
+                User? user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  return UserAccountsDrawerHeader(
+                    margin: EdgeInsets.zero,
+                    currentAccountPictureSize: Size.square(50),
+                    decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+                    accountEmail: Row(
+                      children: [
+                        SizedBox(width: 8), // Adjust the spacing between the icon and the email text
+                        Expanded(
+                          child: Text(user.email ?? ''),
+                        ),
+                      ],
+                    ),
+                    accountName: null,
+                    currentAccountPicture: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Text(
+                        user.displayName?.isNotEmpty == true ? user.displayName![0].toUpperCase() : user.email![0].toUpperCase(),
+                        style: TextStyle(fontSize: 30.0, color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                  );
+                } else {
+                  return UserAccountsDrawerHeader(
+                    margin: EdgeInsets.zero,
+                    currentAccountPictureSize: Size.square(50),
+                    decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+                    accountEmail: Row(
+                      children: [
+                        SizedBox(width: 8), // Adjust the spacing between the icon and the email text
+                        Expanded(
+                          child: Text('Not Logged In'),
+                        ),
+                      ],
+                    ),
+                    accountName: null,
+                    currentAccountPicture: Icon(Icons.person, color: Colors.white, size: 30),
+                  );
+                }
+              },
+            ),
+          ),
+
+          ListTile(
+            leading: Icon(Icons.add_task),
+            title: Text('Add new User'),
+            onTap: (){
+              // Navigator.push(context, MaterialPageRoute(builder: (context)=>signup()));
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('See Current Users'),
+            onTap: (){
+              // Navigator.push(context, MaterialPageRoute(builder: (context)=>FetchData()));
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.list),
+            title: Text('ListTile Page'),
+            onTap: (){
+              // Navigator.push(context, MaterialPageRoute(builder: (context)=>listtile()));
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.build),
+            title: Text('ListviewBuilder Page'),
+            onTap: (){
+              // Navigator.push(context, MaterialPageRoute(builder: (context)=>listview()));
+            },
+          ),
+          Divider(), ListTile(
+            leading: Icon(Icons.dashboard),
+            title: Text('Dashboard Page'),
+            onTap: (){
+              // Navigator.push(context, MaterialPageRoute(builder: (context)=>dashboard()));
+            },
+          ),
+          Divider(),
+        ]),
+      ),
         body:FutureBuilder(
         future: CurrencyConvert.currencyapi(baseCurrency),
     builder: (context, snapshot) {
