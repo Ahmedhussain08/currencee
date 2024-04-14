@@ -4,7 +4,6 @@ import 'package:currencee/forgotpassword.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class login extends StatefulWidget {
   const login({super.key});
@@ -76,17 +75,11 @@ class _loginState extends State<login> {
 
       await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
 
-      // Save user login state using shared preferences only when login is successful
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool('isLoggedIn', true);
-      prefs.setString('userEmail', email);
-
-
       setState(() {
         isloading = false;
       });
 
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => homeScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => homeScreen()));
     } on FirebaseException catch (e) {
       print('Login Error: $e');
 
@@ -98,8 +91,6 @@ class _loginState extends State<login> {
       showErrorDialog(context, e.toString());
     }
   }
-
-
 
 
   @override

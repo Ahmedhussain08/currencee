@@ -132,8 +132,8 @@ class _historyState extends State<history> {
                             ),
                           ),
                           ListView.builder(
-                            shrinkWrap: true, // Add shrinkWrap: true to enable scrolling
-                            physics: NeverScrollableScrollPhysics(), // Disable scrolling of ListView
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
                             itemCount: historyDocs.length,
                             itemBuilder: (context, index) {
                               var historyData = historyDocs[index];

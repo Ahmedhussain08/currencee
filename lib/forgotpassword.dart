@@ -51,22 +51,18 @@ class _forgotpasswordState extends State<forgotpassword> {
       },
     );
   }
-
   Future<void> sendpass(String email) async {
     setState(() {
       isloading = true;
     });
-
     if (email == '') {
       setState(() {
         isloading = false;
       });
       return;
     }
-
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-
       setState(() {
         isloading = false;
       });
@@ -77,7 +73,6 @@ class _forgotpasswordState extends State<forgotpassword> {
               content: Text('Plz Check your Inbox to reset password')
           )
       );
-
     } on FirebaseException catch (e) {
       print('Send Password Reset Email Error: $e');
 

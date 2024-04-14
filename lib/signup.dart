@@ -55,19 +55,15 @@ class _signupState extends State<signup> {
   }
 
   Future<void> signup(String email, dynamic pass) async {
-    // Set isloading to true before starting the signup operation
     setState(() {
       isloading = true;
     });
-
     if (email == '' || password == '') {
       // If email or password is empty, return early without performing signup
       return;
     }
-
     try {
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: pass);
-
       setState(() {
         isloading = false;
       });

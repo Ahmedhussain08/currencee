@@ -201,7 +201,7 @@ class _homeScreenState extends State<homeScreen> {
           ]
       ),
       drawer: Padding(
-        padding: const EdgeInsets.all( 5.0),
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
         child: Drawer(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
