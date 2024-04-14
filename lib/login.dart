@@ -1,7 +1,10 @@
 import 'package:currencee/homeScreen.dart';
+import 'package:currencee/signup.dart';
+import 'package:currencee/forgotpassword.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class login extends StatefulWidget {
   const login({super.key});
@@ -54,26 +57,38 @@ class _loginState extends State<login> {
     );
   }
 
-  Future<void> signup(String email, dynamic pass) async {
+
+  Future<void> login(String email, dynamic pass, ) async {
     // Set isloading to true before starting the signup operation
     setState(() {
       isloading = true;
     });
 
-    if (email == '' || password == '') {
+    if (email == '' || pass == '') {
+      setState(() {
+        isloading = false;
+      });
       return;
     }
 
     try {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: pass);
 
+      await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+
+      // Save user login state using shared preferences only when login is successful
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', true);
+      prefs.setString('userEmail', email);
+
+
       setState(() {
         isloading = false;
       });
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) => homeScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => homeScreen()));
     } on FirebaseException catch (e) {
-      print('Signup Error: $e');
+      print('Login Error: $e');
 
       setState(() {
         isloading = false;
@@ -84,22 +99,85 @@ class _loginState extends State<login> {
     }
   }
 
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          iconTheme: IconThemeData(
+            color: Theme.of(context).primaryColor,
+          ),
+          title: ShaderMask(
+            blendMode: BlendMode.srcIn,
+            shaderCallback: (Rect bounds) {
+              return LinearGradient(
+                colors: [Theme.of(context).primaryColor,Colors.orange, Colors.limeAccent],
+                begin: Alignment.centerLeft, // Adjust the gradient direction as needed
+                end: Alignment.centerRight, // Adjust the gradient direction as needed
+              ).createShader(bounds);
+            },
+            child: Text(
+              'Curren\$ee',
+              style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 2),
+            ),
+          ),
+          centerTitle: true,
+          // actions: [
+          //   Builder(
+          //     builder: (BuildContext context) {
+          //       User? user = FirebaseAuth.instance.currentUser;
+          //       return IconButton(
+          //         onPressed: () {
+          //           if (user != null) {
+          //             // User is logged in, you can handle any specific action here
+          //           } else {
+          //             // User is not logged in, navigate to login page
+          //             Navigator.push(
+          //               context,
+          //               MaterialPageRoute(builder: (context) => login()),
+          //             );
+          //           }
+          //         },
+          //         icon: Icon(
+          //           user != null
+          //               ? Icons.person_outline_sharp
+          //               : Icons.person_outline_sharp,
+          //           // Replace Icons.person_outline_sharp with the appropriate icon for the logged-in user if needed
+          //           // You can also adjust the color, size, etc. based on your requirements
+          //         ),
+          //         tooltip: user != null ? user.email![0].toUpperCase() : 'Login',
+          //       );
+          //     },
+          //   ),
+          // ]
+      ),
+
       body: Center(
         child: Card(
+          color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(30.0),
+            padding: const EdgeInsets.all(10.0),
             child: Form(
               key: _formKey,
               child: Column(
                 children: [
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
-                  Text("Sign Up",style: Theme.of(context).textTheme.titleLarge,),
-                  SizedBox(height: 30,),
+              ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (Rect bounds) {
+                  return LinearGradient(
+                    colors: [Theme.of(context).primaryColor, Colors.orangeAccent],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ).createShader(bounds);
+                },child: Text("Login Here",style: Theme.of(context).textTheme.titleLarge,)),
+                  SizedBox(height: 20,),
                   TextFormField(
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -111,18 +189,21 @@ class _loginState extends State<login> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                           label: Text('Enter Email'),
-                          hintText: 'Enetr Email',
-                          prefixIcon: Icon(Icons.email,color: Theme.of(context).primaryColor,),
+                          hintText: 'Enter Email',
+                          prefixIcon: Icon(Icons.email,  color: Theme.of(context).primaryColor,),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
 
                           ),
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Theme.of(context).primaryColor)),
-                          enabledBorder: OutlineInputBorder())),
+                                  color: Colors.black)),
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor)
+                          ))),
                   SizedBox(
-                    height: 30,
+                    height: 25,
                   ),
                   TextFormField(
                     validator: (value) {
@@ -138,12 +219,19 @@ class _loginState extends State<login> {
                         label: Text('Enter Password'),
                         hintText: 'Enter Password',
                         prefixIcon: Icon(Icons.password,color: Theme.of(context).primaryColor,),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+
+                        ),
                         focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor)),
-                        enabledBorder: OutlineInputBorder()),
+                                color: Colors.black)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor)
+                        )),
                   ),
-                  SizedBox(height: 30,),
+                  SizedBox(height: 25,),
 
                   FractionallySizedBox(
                     widthFactor: 1,
@@ -155,25 +243,32 @@ class _loginState extends State<login> {
                             isloading = true; // Set isloading to true before signup
                           });
                           // Call signup function
-                          signup(email.text.toString(), password.text.toString());
+                          login(email.text.toString(), password.text.toString());
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black,
                         textStyle: TextStyle(fontSize: 20),
                         padding: EdgeInsets.all(17),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(5),
                         ),
                       ),
-                      child: Text('Signup'),
+                      child: ShaderMask(
+                        blendMode: BlendMode.srcIn,
+                        shaderCallback: (Rect bounds) {
+                          return LinearGradient(
+                            colors: [Theme.of(context).primaryColor,Colors.orange, Colors.limeAccent], // Change colors as needed
+                            begin: Alignment.centerLeft, // Adjust the gradient direction as needed
+                            end: Alignment.centerRight, // Adjust the gradient direction as needed
+                          ).createShader(bounds);
+                        },child: Text('Login',style: TextStyle(fontWeight: FontWeight.w800))),
                     )
                         : Align(
                       alignment: Alignment.center,
                       child: Container(
-                        height: 60, // Adjust the height as needed
-                        width: 60, // Adjust the width as needed
+                        height: 60,
+                        width: 60,
                         child: LoadingIndicator(
                           indicatorType: Indicator.ballBeat,
                           colors: [Theme.of(context).primaryColor],
@@ -190,8 +285,8 @@ class _loginState extends State<login> {
                       Flexible(
                         flex: 3,
                         child: Text(
-                          'Already have account',
-                          style: TextStyle(fontSize: 12),
+                          'Not have account',
+                          style: TextStyle(fontSize: 15),
                         ),
                       ),
                       Flexible(
@@ -199,13 +294,13 @@ class _loginState extends State<login> {
                         child: TextButton(
                           onPressed:
                               () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => login(),));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  signup(),));
                           }, // Placeholder function, replace with your login logic
                           child: Text(
-                            'Login Here',
+                            'Sign Up',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 13,
+                              fontSize: 15,
                               color: Theme.of(context).primaryColor,
                             ),
                           ),
@@ -220,6 +315,25 @@ class _loginState extends State<login> {
                   SizedBox(
                     height: 5,
                   ),
+                  TextButton(
+                    onPressed:
+                        () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => forgotpassword(),));
+                    }, // Placeholder function, replace with your login logic
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      overlayColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                    ),
+                  ),
+
                 ],
               ),
             ),
